@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time, sys
+from ball import ball
+from paddle import paddle
 from serial import Serial
 from constants import constant as c
 
@@ -90,9 +92,44 @@ def drawRightScore(score):
         for x in string:
                 write(x)
 
-def drawScores(score):
-	drawLeftScore(score)
-	drawRightScore(score)
+def drawScores():
+	drawLeftScore(leftScore)
+	drawRightScore(rightScore)
+	write(c.esc+"[40m ")
+	write(c.esc+"[0;0H")
+
+#------Draw Ball-----
+def drawBall(ball):
+	write(c.colorBlack)
+	string = c.esc + "[%s;%sH"%(ball.y, ball.x)
+	string += c.colorWhite
+	write(string)
+
+def updateBall():
+                if b.yDir>0:
+                        b.y+=1
+                elif b.yDir<0:
+                        b.y-=1
+
+                if b.xDir>0:
+                        b.x+=1
+                elif b.xDir<0:
+                        b.x-=1
+
+                if b.checkHit(paddleLeft.y, paddleRight.y):
+                        self.xDir *= -1
+                if b.checkHitSide():
+                        b.yDir *= -1
+		score = b.checkScore()
+                if score == 1:
+			leftScore +=1
+			drawLeftScore()
+                        #b.serve()
+                elif score == -1:
+                        rightScore += 1
+			drawRightScore()
+                        #b.serve()
+                return b.ballPos()
 
 #-----Draw Initial-----
 def drawInit():
@@ -100,18 +137,25 @@ def drawInit():
 	middle = (c.WINDOW_HEIGHT - c.BAT_SIZE)/2
 	drawBats(middle)
 	drawCenter()
-	drawScores(0)
+	drawScores()
+	drawBall(b)
 
 
 #----------Main----------
 def main():
 	serailPort = serialSetup()
-
+	global leftScore, rightScore, paddleLeft, paddleRight, b
+	b = ball()
+	leftScore=rightScore=0
+	paddleLeft  = paddle("left")
+	paddleRight = paddle("right")
 	drawInit()
+
 	go = True
-	gameStart = Flase
+	gameStart = False
 	while go:
-		if not gameStart:
+		updateBall()
+#		if not gameStart:
 #		inputString = serialPort.read()
 #		inputString = readchar.readchar()
 #		if ord(inputString) == 112:

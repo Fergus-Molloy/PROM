@@ -10,7 +10,7 @@ class ball:
 	def checkHit(self, paddle1Y, paddle2Y):
 		if self.xDir == -1 and self.x==0 and paddle1Y > self.y and (paddle1Y-c.BAT_HIEGHT) < self.y:
 			return True
-		if self.xDir == 1 and self.x==c.WINDOW_WIDTH-1 and paddle2Y > self.y and (paddle2Y-c.BAT_HIEGHT) < self.y:
+		if self.xDir == 1 and self.x==c.WINDOW_WIDTH and paddle2Y > self.y and (paddle2Y-c.BAT_HIEGHT) < self.y:
 			return True
 		else:
 			return False
@@ -26,10 +26,10 @@ class ball:
 	def checkScore(self):
 		if self.xDir == -1 and self.x < 0:
 			return -1 #scored on left side (right gains point)
-		if self.xDir == 1 and self.x == c.WINDOW_WIDTH:
+		if self.xDir == 1 and self.x > c.WINDOW_WIDTH:
 			return 1 #scored on the right side (left gains point)
 		else:
 			return 0 #no score
 	
 	def ballPos(self):
-		return (self.x, self,y)
+		return (self.x, self.y)
