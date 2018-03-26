@@ -5,6 +5,14 @@ from paddle import paddle
 from serial import Serial
 from constants import constant as c
 
+#gloabal variables needed
+global b, leftScore, rightScore, paddleLeft, paddleRight
+b = ball()
+leftScore=0
+rightScore=0
+paddleLeft  = paddle("left")
+paddleRight = paddle("right")
+
 def write(string):
 #	sys.stdout.write(str(string))
 	serialPort.write(str(string))
@@ -36,7 +44,7 @@ def drawLeftBat(batY):
 def drawRightBat(batY):
 	write(c.esc+"[0;0H")
 	for x in range(batY, batY+c.BAT_SIZE):
-		bat = "[%d;%dH" %(x, c.WINDOW_WIDTH-1)
+		bat = "[%d;%dH" %(x, c.WINDOW_WIDTH)
 		write(c.esc+bat)
 		write(c.colorBlue)
 
@@ -76,18 +84,18 @@ def scoreSequence(score):
 	]
 	return scores[score]
 
-def drawLeftScore(score):
+def drawLeftScore(leftScore):
 	xOffset = c.WINDOW_WIDTH / 4
 	yOffset = c.WINDOW_HEIGHT / 10
-	string = scoreSequence(score)
+	string = scoreSequence(leftScore)
 	write(chr(27)+"[%d;%dH"%(yOffset,xOffset))
 	for x in string:
 		write(x)
 
-def drawRightScore(score):
+def drawRightScore(rightScore):
 	xOffset =c.WINDOW_WIDTH - (c.WINDOW_WIDTH/4)
         yOffset = c.WINDOW_HEIGHT / 10
-        string = scoreSequence(score)
+        string = scoreSequence(rightScore)
         write(chr(27)+"[%d;%dH"%(yOffset,xOffset))
         for x in string:
                 write(x)
@@ -97,15 +105,17 @@ def drawScores():
 	drawRightScore(rightScore)
 	write(c.esc+"[40m ")
 	write(c.esc+"[0;0H")
-
-#------Draw Ball-----
-def drawBall(ball):
-	write(c.colorBlack)
-	string = c.esc + "[%s;%sH"%(ball.y, ball.x)
-	string += c.colorWhite
+	string = c.esc + "[%s;%sH"%(b.y, b.x)
 	write(string)
+	
+#------Draw Ball-----
+def drawBall():
+	write(c.esc+"[1D"+c.colorBlack)
+	string = c.esc + "[%s;%sH"%(b.y, b.x)
+	write(string)
+	string += c.colorWhite
 
-def updateBall():
+def updateBall(leftScore, rightScore):
                 if b.yDir>0:
                         b.y+=1
                 elif b.yDir<0:
@@ -117,19 +127,19 @@ def updateBall():
                         b.x-=1
 
                 if b.checkHit(paddleLeft.y, paddleRight.y):
-                        self.xDir *= -1
+                        b.xDir *= -1
                 if b.checkHitSide():
                         b.yDir *= -1
 		score = b.checkScore()
                 if score == 1:
 			leftScore +=1
-			drawLeftScore()
+			drawLeftScore(leftScore)
                         #b.serve()
                 elif score == -1:
                         rightScore += 1
-			drawRightScore()
+			drawRightScore(rightScore)
                         #b.serve()
-                return b.ballPos()
+#                return b.ballPos()
 
 #-----Draw Initial-----
 def drawInit():
@@ -138,23 +148,20 @@ def drawInit():
 	drawBats(middle)
 	drawCenter()
 	drawScores()
-	drawBall(b)
+	drawBall()
 
 
 #----------Main----------
 def main():
 	serailPort = serialSetup()
-	global leftScore, rightScore, paddleLeft, paddleRight, b
-	b = ball()
-	leftScore=rightScore=0
-	paddleLeft  = paddle("left")
-	paddleRight = paddle("right")
 	drawInit()
-
 	go = True
 	gameStart = False
 	while go:
-		updateBall()
+		updateBall(leftScore, rightScore)
+		drawScores()
+		drawBall()
+		time.sleep(0.1)
 #		if not gameStart:
 #		inputString = serialPort.read()
 #		inputString = readchar.readchar()
