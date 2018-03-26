@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-#import readchar
 import time, sys
 from serial import Serial
 from constants import constant as c
@@ -35,7 +34,7 @@ def drawLeftBat(batY):
 def drawRightBat(batY):
 	write(c.esc+"[0;0H")
 	for x in range(batY, batY+c.BAT_SIZE):
-		bat = "[%d;%dH" %(x, c.WINDOW_WIDTH)
+		bat = "[%d;%dH" %(x, c.WINDOW_WIDTH-1)
 		write(c.esc+bat)
 		write(c.colorBlue)
 
@@ -101,7 +100,7 @@ def drawInit():
 	middle = (c.WINDOW_HEIGHT - c.BAT_SIZE)/2
 	drawBats(middle)
 	drawCenter()
-	drawScores(9)
+	drawScores(0)
 
 
 #----------Main----------
@@ -110,7 +109,9 @@ def main():
 
 	drawInit()
 	go = True
-#	while go:
+	gameStart = Flase
+	while go:
+		if not gameStart:
 #		inputString = serialPort.read()
 #		inputString = readchar.readchar()
 #		if ord(inputString) == 112:
