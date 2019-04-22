@@ -16,22 +16,33 @@ def serialSetup():
 def clear():
 	write(chr(27)+"[0;0H")
 	for y in range(c.WINDOW_HEIGHT):
-#		for x in range(c.WINDOW_WIDTH):
-		write(chr(27)+"[40m ")
-		write(chr(27)+"[1B")
-		write(chr(27)+"[1D")
-		print y
+		row = chr(27)+ "[%d;0H" %(y,)
+		write(row)
+		for x in range(c.WINDOW_WIDTH):
+			write(chr(27)+"[40m ")
 	write(chr(27)+"[0;0H")
 
 def drawInit():
-	batHeight = c.WINDOW_HEIGHT/2 - c.BAT_SIZE
-	string = "[%d;0H" %(batHeight,)
-	write(chr(27)+string)
-	string = chr(27) + "[44m "
+	clear()
+	color = chr(27) + "[44m "
 	for x in range(c.BAT_SIZE):
-		write(string)
-		write(chr(27)+"[1B")
-		write(chr(27)+"[1D")
+		batHeight = (c.WINDOW_HEIGHT - c.BAT_SIZE)/2 + x
+		bat1 = "[%d;0H" %(batHeight,)
+		bat2 = "[%d;%dH" %(batHeight, c.WINDOW_WIDTH)
+		write(chr(27)+bat1)
+		write(chr(27)+color)
+		write(chr(27)+bat2)
+		write(chr(27)+color)
+
+	color1 = "[40m "
+	color2 = "[42m "
+	for x in range(c.WINDOW_HEIGHT):
+		middle = "[%d;%dH" %(x, c.WINDOW_WIDTH/2)
+		write(chr(27)+middle)
+		if x%4 == 0:
+			write(chr(27)+color1)
+		else:
+			write(chr(27)+color2)
 
 def main():
 #	serailPort = serialSetup()
