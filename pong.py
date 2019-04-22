@@ -14,36 +14,52 @@ def serialSetup():
 	return serialPort
 
 def clear():
-	write(chr(27)+"[0;0H")
+	write(c.esc+"[0;0H")
 	for y in range(c.WINDOW_HEIGHT):
-		row = chr(27)+ "[%d;0H" %(y,)
+		row = c.esc+ "[%d;0H" %(y,)
 		write(row)
 		for x in range(c.WINDOW_WIDTH):
-			write(chr(27)+"[40m ")
-	write(chr(27)+"[0;0H")
+			write(c.colorBlack)
+	write(c.esc+"[0;0H")
 
-def drawInit():
-	clear()
-	color = chr(27) + "[44m "
+#-----Draw Bats-----
+def drawLeftBat(batY):
+	write(c.esc+"[0;0H")
+	for x in range(batY,c.BAT_SIZE):
+		bat = "[%d;0H" %(x,)
+		write(c.esc+bat)
+		write(c.colorBlue)
+
+def drawRightBat(batY):
+	write(c.esc+"[0;0H")
 	for x in range(c.BAT_SIZE):
 		batHeight = (c.WINDOW_HEIGHT - c.BAT_SIZE)/2 + x
-		bat1 = "[%d;0H" %(batHeight,)
-		bat2 = "[%d;%dH" %(batHeight, c.WINDOW_WIDTH)
-		write(chr(27)+bat1)
-		write(chr(27)+color)
-		write(chr(27)+bat2)
-		write(chr(27)+color)
+		bat = "[%d;%dH" %(x, c.WINDOW_WIDTH)
+		write(c.esc+bat)
+		write(c.colorBlue)
 
-	color1 = "[40m "
-	color2 = "[42m "
+def drawBats(pos)
+	drawLeftBat(pos)
+	drawRightBat(pos)
+
+#-----Draw Center-----
+def drawCenter():
 	for x in range(c.WINDOW_HEIGHT):
 		middle = "[%d;%dH" %(x, c.WINDOW_WIDTH/2)
-		write(chr(27)+middle)
+		write(c.esc+middle)
 		if x%4 == 0:
-			write(chr(27)+color1)
+			write(c.esc+color1)
 		else:
-			write(chr(27)+color2)
+			write(c.esc+color2)
 
+#-----Draw Initial-----
+def drawInit():
+	clear()
+	middle = (c.WINDOW_HEIGHT - c.BAT_SIZE)/2
+	drawBats(middle)
+
+
+#----------Main----------
 def main():
 #	serailPort = serialSetup()
 
