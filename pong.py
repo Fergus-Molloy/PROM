@@ -54,7 +54,7 @@ def drawBats(pos):
 
 #-----Draw Center-----
 def drawCenter():
-	b=0 #for 2 bit counter
+	b=1 #for 2 bit counter
 	for x in range(c.WINDOW_HEIGHT):
 		middle = "[%d;%dH" %(x, c.WINDOW_WIDTH/2)
 		write(c.esc+middle)
@@ -113,9 +113,14 @@ def drawBall():
 	write(c.esc+"[1D"+c.colorBlack)
 	string = c.esc + "[%s;%sH"%(b.y, b.x)
 	write(string)
-	string += c.colorWhite
+	write(c.colorWhite)
+def clearBall():
+	string  = c.esc+"[%s;%sH"%(b.y, b.x)
+	write(string)
+	write(c.colorBlack)
 
-def updateBall(leftScore, rightScore):
+def updateBall():
+		clearBall()
                 if b.yDir>0:
                         b.y+=1
                 elif b.yDir<0:
@@ -132,14 +137,35 @@ def updateBall(leftScore, rightScore):
                         b.yDir *= -1
 		score = b.checkScore()
                 if score == 1:
-			leftScore +=1
+			global leftScore
+			leftScore = leftScore + 1
 			drawLeftScore(leftScore)
                         #b.serve()
                 elif score == -1:
+			global rightScore
                         rightScore += 1
 			drawRightScore(rightScore)
                         #b.serve()
 #                return b.ballPos()
+
+def ballOnCenter():
+	if b.x == c.WINDOW_WIDTH/2:
+		return True
+	else:
+		return False
+
+def ballOnScore():
+	leftXOffset = c.WINDOW_WIDTH / 4
+	rightXOffset = c.WINDOW_WIDTH - leftXOffset
+	yOffset = c.WINDOW_HEIGHT / 10
+	if b.x > leftXOffset and b.x < leftXOffset+3 and \
+	b.y < yOffset and b.y > yOffset+5:
+		return True
+	elif b.x > rightXOffset and b.x < rightXOffset+3 and \
+	b.y < yOffset and b.y > yOffset+5:
+		return True
+	else:
+		return False
 
 #-----Draw Initial-----
 def drawInit():
@@ -157,11 +183,31 @@ def main():
 	drawInit()
 	go = True
 	gameStart = False
+	redrawCenter = False
+	redrawScore = False
 	while go:
-		updateBall(leftScore, rightScore)
-		drawScores()
-		drawBall()
-		time.sleep(0.1)
+		if redrawCenter:
+			updateBall()
+			drawCenter()
+			time.sleep(0.5)
+			continue
+		elif redrawScore:
+			updateBall()
+			drawScore()
+			time.sleep(0.5)
+			continue
+		else:
+			updateBall()
+			
+		if ballOnCenter():
+			redrawCenter = True
+			drawBall()
+		elif ballOnScore():
+			redrawScore = True
+			drawBall()
+		else:
+			drawBall()
+		time.sleep(0.05)
 #		if not gameStart:
 #		inputString = serialPort.read()
 #		inputString = readchar.readchar()
