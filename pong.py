@@ -54,10 +54,10 @@ def drawBats(pos):
 
 #-----Draw Center-----
 def drawCenter():
-	b=1 #for 2 bit counter
+	b=1 #for 2 bit counter starting at 1 makes it pretty
+	middle = "[0;%dH" %(c.WINDOW_WIDTH/2,)
+	write(c.esc+middle)
 	for x in range(c.WINDOW_HEIGHT):
-		middle = "[%d;%dH" %(x, c.WINDOW_WIDTH/2)
-		write(c.esc+middle)
 		if b == 3: #2 bits are full
 			b = 0 #"overflow"
 			write(c.colorYellow)
@@ -67,6 +67,8 @@ def drawCenter():
 		else:
 			b += 1
 			write(c.colorYellow)
+		write(c.esc+"[1B")
+		write(c.esc+"[1D")
 
 #-----Draw Scores-----
 def scoreSequence(score):
@@ -158,11 +160,11 @@ def ballOnScore():
 	leftXOffset = c.WINDOW_WIDTH / 4
 	rightXOffset = c.WINDOW_WIDTH - leftXOffset
 	yOffset = c.WINDOW_HEIGHT / 10
-	if b.x > leftXOffset and b.x < leftXOffset+3 and \
-	b.y < yOffset and b.y > yOffset+5:
+	if b.x > leftXOffset-1 and b.x < leftXOffset+3 and \
+	b.y > yOffset-1 and b.y < yOffset+5:
 		return True
-	elif b.x > rightXOffset and b.x < rightXOffset+3 and \
-	b.y < yOffset and b.y > yOffset+5:
+	elif b.x > rightXOffset-1 and b.x < rightXOffset+3 and \
+	b.y > yOffset-1 and b.y < yOffset+5:
 		return True
 	else:
 		return False
@@ -175,7 +177,28 @@ def drawInit():
 	drawCenter()
 	drawScores()
 	drawBall()
+#	drawArea()
+#	write(c.esc+"[0;0H")
 
+def drawArea():
+	leftXOffset = c.WINDOW_WIDTH / 4
+	rightXOffset = c.WINDOW_WIDTH - leftXOffset
+	yOffset  = (c.WINDOW_HEIGHT / 10)
+	for x in range(c.WINDOW_WIDTH):
+		for y in range(c.WINDOW_HEIGHT):
+			write(c.esc+"[%s;%sH"%(y,x))
+			if x > leftXOffset-1 and x < leftXOffset+3:
+				print "x: %s" %(True,)
+				if y > yOffset-1 and y < yOffset+5:
+					print "y: %s" %(True,)
+					write(c.colorCyan)
+			elif x > rightXOffset-1 and x < rightXOffset+3:
+				print "x: %s" %(True,)
+				if y > yOffset-1 and y < yOffset+5:
+					print "y: %s" %(True,)
+					write(c.colorCyan)
+			#else:
+			#	write(c.colorBlack)
 
 #----------Main----------
 def main():
@@ -189,12 +212,14 @@ def main():
 		if redrawCenter:
 			updateBall()
 			drawCenter()
-			time.sleep(0.5)
+			redrawCenter = False
+			time.sleep(0.05)
 			continue
 		elif redrawScore:
 			updateBall()
-			drawScore()
-			time.sleep(0.5)
+			drawScores()
+			redrawScore = False
+			time.sleep(0.05)
 			continue
 		else:
 			updateBall()
