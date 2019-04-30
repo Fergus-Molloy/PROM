@@ -177,6 +177,7 @@ def drawInit():
 	drawCenter()
 	drawScores()
 	drawBall()
+	initGPIO()
 #	drawArea()
 #	write(c.esc+"[0;0H")
 
