@@ -109,7 +109,7 @@ def drawScores():
 	write(c.esc+"[0;0H")
 	string = c.esc + "[%s;%sH"%(b.y, b.x)
 	write(string)
-	
+
 #------Draw Ball-----
 def drawBall():
 	write(c.esc+"[1D"+c.colorBlack)
@@ -200,6 +200,19 @@ def drawArea():
 			#else:
 			#	write(c.colorBlack)
 
+#-----GPIO-----
+def initGPIO():
+	exclude  = [1,2,4,6,9,14,17,20,25,30,31,34,39]
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
+	for x in range(1,40):
+		if not x in exclude:
+			GPIO.setup(x, GPIO.OUT)
+			print x
+			GPIO.output(x, True)
+			time.sleep(10)
+			GPIO.output(x, False)
+
 #----------Main----------
 def main():
 	serailPort = serialSetup()
@@ -223,7 +236,7 @@ def main():
 			continue
 		else:
 			updateBall()
-			
+
 		if ballOnCenter():
 			redrawCenter = True
 			drawBall()
