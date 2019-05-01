@@ -203,16 +203,23 @@ def drawArea():
 
 #-----GPIO-----
 def initGPIO():
-	exclude  = [1,2,4,6,9,14,17,20,25,30,31,34,39]
+	global LEDpins
+	LEDpins  = [5,6,12,13,16,19,20,26]
 	GPIO.setwarnings(False)
 	GPIO.setmode(GPIO.BCM)
-	for x in range(1,40):
-		if not x in exclude:
-			GPIO.setup(x, GPIO.OUT)
-			print x
-			GPIO.output(x, True)
-			time.sleep(10)
-			GPIO.output(x, False)
+	for x in LEDpins:
+		GPIO.setup(x, GPIO.OUT)
+		GPIO.output(x, True)
+	time.sleep(1)
+	for x in LEDpins:
+		GPIO.output(x, False)
+
+def updateLED():
+	ratio = ((float(b.x)/float(c.WINDOW_WIDTH))*7)#index range 0-7
+	LED = int(round(ratio))
+	for x in LEDpins:
+		GPIO.output(x,False)
+	GPIO.output(LEDpins[LED], True)
 
 #----------Main----------
 def main():
@@ -247,6 +254,7 @@ def main():
 		else:
 			drawBall()
 		time.sleep(0.05)
+		updateLED()
 #		if not gameStart:
 #		inputString = serialPort.read()
 #		inputString = readchar.readchar()
