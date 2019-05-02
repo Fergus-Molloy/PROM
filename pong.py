@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time, sys
+from I2C import I2C
 from ball import ball
 from paddle import paddle
 from serial import Serial
@@ -123,15 +124,8 @@ def clearBall():
 
 def updateBall():
 		clearBall()
-                if b.yDir>0:
-                        b.y+=1
-                elif b.yDir<0:
-                        b.y-=1
-
-                if b.xDir>0:
-                        b.x+=1
-                elif b.xDir<0:
-                        b.x-=1
+                b.y += b.yDir
+                b.x+=b.xDir
 
                 if b.checkHit(paddleLeft.y, paddleRight.y):
                         b.xDir *= -1
@@ -215,12 +209,13 @@ def initGPIO():
 		GPIO.output(x, False)
 
 def updateLED():
+	i2c = I2C()
 	ratio = ((float(b.x)/float(c.WINDOW_WIDTH))*7)#index range 0-7
 	LED = int(round(ratio))
 	for x in LEDpins:
 		GPIO.output(x,False)
 	GPIO.output(LEDpins[LED], True)
-
+	i2c.updateLEDS(LED)
 #----------Main----------
 def main():
 	serailPort = serialSetup()
