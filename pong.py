@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time, sys
+from PyGlow import PyGlow, BOTH
 from I2C import I2C
 from ball import ball
 from paddle import paddle
@@ -13,6 +14,12 @@ leftScore=0
 rightScore=0
 paddleLeft  = paddle("left")
 paddleRight = paddle("right")
+speed = 0.04
+pg = PyGlow(pulse=True, speed=1000, pulse_dir=BOTH)
+
+def rightScores():
+	pg.all(brightness=150)
+	pg.all(0)
 
 def write(string):
 #	sys.stdout.write(str(string))
@@ -94,6 +101,7 @@ def drawLeftScore(leftScore):
 	write(chr(27)+"[%d;%dH"%(yOffset,xOffset))
 	for x in string:
 		write(x)
+	return
 
 def drawRightScore(rightScore):
 	xOffset =c.WINDOW_WIDTH - (c.WINDOW_WIDTH/4)
@@ -102,6 +110,7 @@ def drawRightScore(rightScore):
         write(chr(27)+"[%d;%dH"%(yOffset,xOffset))
         for x in string:
                 write(x)
+	return
 
 def drawScores():
 	drawLeftScore(leftScore)
@@ -136,13 +145,14 @@ def updateBall():
 			global leftScore
 			leftScore = leftScore + 1
 			drawLeftScore(leftScore)
+			#leftScore()
                         #b.serve()
                 elif score == -1:
 			global rightScore
                         rightScore += 1
 			drawRightScore(rightScore)
-                        #b.serve()
-#                return b.ballPos()
+			rightScores()
+			#b.serve()
 
 def ballOnCenter():
 	if b.x == c.WINDOW_WIDTH/2:
@@ -229,13 +239,13 @@ def main():
 			updateBall()
 			drawCenter()
 			redrawCenter = False
-			time.sleep(0.05)
+			time.sleep(speed)
 			continue
 		elif redrawScore:
 			updateBall()
 			drawScores()
 			redrawScore = False
-			time.sleep(0.05)
+			time.sleep(speed)
 			continue
 		else:
 			updateBall()
@@ -248,7 +258,7 @@ def main():
 			drawBall()
 		else:
 			drawBall()
-		time.sleep(0.05)
+		time.sleep(speed)
 		updateLED()
 #		if not gameStart:
 #		inputString = serialPort.read()
