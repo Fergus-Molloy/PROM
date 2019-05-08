@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time, sys
+from PyGlow import PyGlow, BOTH
+from I2C import I2C
 from ball import ball
 from paddle import paddle
 from serial import Serial
@@ -12,6 +14,12 @@ leftScore=0
 rightScore=0
 paddleLeft  = paddle("left")
 paddleRight = paddle("right")
+speed = 0.04
+pg = PyGlow(pulse=True, speed=1000, pulse_dir=BOTH)
+
+def rightScores():
+	pg.all(brightness=150)
+	pg.all(0)
 
 def write(string):
 #	sys.stdout.write(str(string))
@@ -54,10 +62,10 @@ def drawBats(pos):
 
 #-----Draw Center-----
 def drawCenter():
-	b=0 #for 2 bit counter
+	b=1 #for 2 bit counter starting at 1 makes it pretty
+	middle = "[0;%dH" %(c.WINDOW_WIDTH/2,)
+	write(c.esc+middle)
 	for x in range(c.WINDOW_HEIGHT):
-		middle = "[%d;%dH" %(x, c.WINDOW_WIDTH/2)
-		write(c.esc+middle)
 		if b == 3: #2 bits are full
 			b = 0 #"overflow"
 			write(c.colorYellow)
@@ -67,6 +75,8 @@ def drawCenter():
 		else:
 			b += 1
 			write(c.colorYellow)
+		write(c.esc+"[1B")
+		write(c.esc+"[1D")
 
 #-----Draw Scores-----
 def scoreSequence(score):
@@ -91,6 +101,7 @@ def drawLeftScore(leftScore):
 	write(chr(27)+"[%d;%dH"%(yOffset,xOffset))
 	for x in string:
 		write(x)
+	return
 
 def drawRightScore(rightScore):
 	xOffset =c.WINDOW_WIDTH - (c.WINDOW_WIDTH/4)
@@ -99,6 +110,7 @@ def drawRightScore(rightScore):
         write(chr(27)+"[%d;%dH"%(yOffset,xOffset))
         for x in string:
                 write(x)
+	return
 
 def drawScores():
 	drawLeftScore(leftScore)
@@ -107,24 +119,22 @@ def drawScores():
 	write(c.esc+"[0;0H")
 	string = c.esc + "[%s;%sH"%(b.y, b.x)
 	write(string)
-	
+
 #------Draw Ball-----
 def drawBall():
 	write(c.esc+"[1D"+c.colorBlack)
 	string = c.esc + "[%s;%sH"%(b.y, b.x)
 	write(string)
-	string += c.colorWhite
+	write(c.colorWhite)
+def clearBall():
+	string  = c.esc+"[%s;%sH"%(b.y, b.x)
+	write(string)
+	write(c.colorBlack)
 
-def updateBall(leftScore, rightScore):
-                if b.yDir>0:
-                        b.y+=1
-                elif b.yDir<0:
-                        b.y-=1
-
-                if b.xDir>0:
-                        b.x+=1
-                elif b.xDir<0:
-                        b.x-=1
+def updateBall():
+		clearBall()
+                b.y += b.yDir
+                b.x+=b.xDir
 
                 if b.checkHit(paddleLeft.y, paddleRight.y):
                         b.xDir *= -1
@@ -132,14 +142,36 @@ def updateBall(leftScore, rightScore):
                         b.yDir *= -1
 		score = b.checkScore()
                 if score == 1:
-			leftScore +=1
+			global leftScore
+			leftScore = leftScore + 1
 			drawLeftScore(leftScore)
+			#leftScore()
                         #b.serve()
                 elif score == -1:
+			global rightScore
                         rightScore += 1
 			drawRightScore(rightScore)
-                        #b.serve()
-#                return b.ballPos()
+			rightScores()
+			#b.serve()
+
+def ballOnCenter():
+	if b.x == c.WINDOW_WIDTH/2:
+		return True
+	else:
+		return False
+
+def ballOnScore():
+	leftXOffset = c.WINDOW_WIDTH / 4
+	rightXOffset = c.WINDOW_WIDTH - leftXOffset
+	yOffset = c.WINDOW_HEIGHT / 10
+	if b.x > leftXOffset-1 and b.x < leftXOffset+3 and \
+	b.y > yOffset-1 and b.y < yOffset+5:
+		return True
+	elif b.x > rightXOffset-1 and b.x < rightXOffset+3 and \
+	b.y > yOffset-1 and b.y < yOffset+5:
+		return True
+	else:
+		return False
 
 #-----Draw Initial-----
 def drawInit():
@@ -149,19 +181,85 @@ def drawInit():
 	drawCenter()
 	drawScores()
 	drawBall()
+	initGPIO()
+#	drawArea()
+#	write(c.esc+"[0;0H")
 
+def drawArea():
+	leftXOffset = c.WINDOW_WIDTH / 4
+	rightXOffset = c.WINDOW_WIDTH - leftXOffset
+	yOffset  = (c.WINDOW_HEIGHT / 10)
+	for x in range(c.WINDOW_WIDTH):
+		for y in range(c.WINDOW_HEIGHT):
+			write(c.esc+"[%s;%sH"%(y,x))
+			if x > leftXOffset-1 and x < leftXOffset+3:
+				print "x: %s" %(True,)
+				if y > yOffset-1 and y < yOffset+5:
+					print "y: %s" %(True,)
+					write(c.colorCyan)
+			elif x > rightXOffset-1 and x < rightXOffset+3:
+				print "x: %s" %(True,)
+				if y > yOffset-1 and y < yOffset+5:
+					print "y: %s" %(True,)
+					write(c.colorCyan)
+			#else:
+			#	write(c.colorBlack)
 
+#-----GPIO-----
+def initGPIO():
+	global LEDpins
+	LEDpins  = [5,6,12,13,16,19,20,26]
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
+	for x in LEDpins:
+		GPIO.setup(x, GPIO.OUT)
+		GPIO.output(x, True)
+	time.sleep(1)
+	for x in LEDpins:
+		GPIO.output(x, False)
+
+def updateLED():
+	i2c = I2C()
+	ratio = ((float(b.x)/float(c.WINDOW_WIDTH))*7)#index range 0-7
+	LED = int(round(ratio))
+	for x in LEDpins:
+		GPIO.output(x,False)
+	GPIO.output(LEDpins[LED], True)
+	i2c.updateLEDS(LED)
 #----------Main----------
 def main():
 	serailPort = serialSetup()
 	drawInit()
 	go = True
 	gameStart = False
+	redrawCenter = False
+	redrawScore = False
 	while go:
-		updateBall(leftScore, rightScore)
-		drawScores()
-		drawBall()
-		time.sleep(0.1)
+		if redrawCenter:
+			updateBall()
+			drawCenter()
+			redrawCenter = False
+			time.sleep(speed)
+			continue
+		elif redrawScore:
+			updateBall()
+			drawScores()
+			redrawScore = False
+			time.sleep(speed)
+			continue
+		else:
+			updateBall()
+
+		if ballOnCenter():
+			redrawCenter = True
+			drawBall()
+		elif ballOnScore():
+			redrawScore = True
+			drawBall()
+		else:
+			drawBall()
+		time.sleep(speed)
+		updateLED()
 #		if not gameStart:
 #		inputString = serialPort.read()
 #		inputString = readchar.readchar()

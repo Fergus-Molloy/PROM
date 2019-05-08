@@ -6,6 +6,7 @@ class constant:
 	DIFF_SOUNDS=False
 	MUSIC=False
 	DIFF_SPEED=False
+	DEBUG = False
 
 	esc = chr(27)
 	#colors
