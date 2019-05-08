@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO				
 import time
+import sys
 
 class ldr():
     def __init__( self, pinI, pinO  ):
@@ -23,27 +24,49 @@ class ldr():
 
         while GPIO.input(self.TEST_PIN) == 0:
             self.count +=1	
-
         return self.count 
 
     def getCount( self ):
         return self.count
 
-# Main program block
+class button():
+  def__init__(self, pin1,pin2):
+    self.BUTTON_1 = pin1
+    self.BUTTON_2 = pin2
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
 
+    GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+
+` def update(self,pin):
+  b=[0,0]
+    while True:
+	    if (GPIO.input(11)==1):
+		    b[0]=0
+	    else:
+		    b[0]=1
+      if (GPIO.input(15)==1):
+		    b[1]=0
+	    else:
+		    b[1]=1
+  return b
+  
 def main():
     print("main program")
-    ldr1 = ldr( 23, 24 )
-    ldr2 = ldr( 7, 24 )
-
+    ldr1 = ldr( 10, 9 )
+    buttons1 = (11, 15)
     while True: 
         countA = ldr1.update()
-        countB = ldr2.update()
-
-        outputString = "Count = " + str(countA) + " " + str(countB)
+        outputString = "Resistor value = " + str(countA) 
         print outputString
-
-        time.sleep(1) 		
+        buttonval = buttons1.update()
+        outputString2 = "Button 1 Value = " + buttonval[0]
+        outputString3= "Button 2 Value = " + buttonval[1]
+        print outputString2
+        print outputString3
+        time.sleep(0.5) 
+        sys.stdout.write("\033[2A")
     
 
 if __name__ == '__main__':
