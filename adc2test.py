@@ -15,7 +15,7 @@
 
 import smbus 
 import time I2CADDR = 0x21 
-CMD_CODE = ??
+CMD_CODE = 0100
 
 #identify this from the data sheet
 
