@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO				
 import time
+import sys
 
 class ldr():
     def __init__( self, pinI, pinO  ):
@@ -23,7 +24,6 @@ class ldr():
 
         while GPIO.input(self.TEST_PIN) == 0:
             self.count +=1	
-
         return self.count 
 
     def getCount( self ):
@@ -37,11 +37,10 @@ def main():
 
     while True: 
         countA = ldr1.update()
-
-        outputString = "Count = " + str(countA) 
+        outputString = "Resistor value = " + str(countA) 
         print outputString
-
-        time.sleep(1) 		
+        time.sleep(0.5) 
+        sys.stdout.write("\033[0A")
     
 
 if __name__ == '__main__':
