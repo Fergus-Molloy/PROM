@@ -6,66 +6,23 @@ import I2C
 import ball
 import bat
 import adc
-from PyGlow import PyGlow, BOTH
 from serial import Serial
 from constants import constant as c
 
-# gloabal variables needed
-global b, leftScore, rightScore, batLeft, batRight, adc0
-adc0 = adc.adc(10, 9)
-b = ball.ball()
-leftScore = 0
-rightScore = 0
-batLeft = bat.bat("left")
-batRight = bat.bat("right")
-speed = 0.04
-pg = PyGlow(pulse=True, speed=1000, pulse_dir=BOTH)
+
+def write(serial_port, string):
+    serial_port.write(str(string))
 
 
-def rightScores():
-    pg.all(brightness=150)
-    pg.all(0)
-
-
-def write(string):
-    serialPort.write(str(string))
-
-
-def serialSetup():
-    global serialPort
-    serialPort = Serial("/dev/ttyAMA0", 115200)
-    if serialPort.isOpen() == False:
-        serialPort.open()
-    return serialPort
-
-
-def updateBall():
-    clearBall()
-    b.y += b.yDir
-    b.x += b.xDir
-
-    if b.checkHit(batLeft.y, batRight.y):
-        b.xDir *= -1
-    if b.checkHitSide():
-        b.yDir *= -1
-    score = b.checkScore()
-    if score == 1:
-        global leftScore
-        leftScore = leftScore + 1
-        drawLeftScore(leftScore)
-        # leftScore()
-        # b.serve()
-    elif score == -1:
-        global rightScore
-        rightScore += 1
-        drawRightScore(rightScore)
-        rightScores()
-        # b.serve()
+def serial_setup():
+    serial_port = Serial("/dev/ttyAMA0", 115200)
+    if serial_port.isOpen() == False:
+        serial_port.open()
+    return serial_port
 
 
 # -----GPIO-----
-def initGPIO():
-    global LEDpins
+def init_gpio():
     LEDpins = [5, 6, 12, 13, 16, 19, 20, 26]
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
@@ -77,62 +34,61 @@ def initGPIO():
         GPIO.output(x, False)
 
 
-def updateLED():
-    i2c = I2C()
-    ratio = ((float(b.x)/float(c.WINDOW_WIDTH))*7)  # index range 0-7
-    LED = int(round(ratio))
-    for x in LEDpins:
-        GPIO.output(x, False)
-    GPIO.output(LEDpins[LED], True)
-    i2c.updateLEDS(LED)
-
 # -----ADC-----
+def update_adc(serial_port, adc, left_bat):
+    value = adc.update()
+    left_bat.setY(value)
+    draw.draw_left_bat(serial_port, left_bat)
 
-
-def updateADC():
-    value = adc0.update()
-    print "Value: %s" % (value,)
-    clear_line()
-    batLeft.setY(value)
-    drawLeftBat()
 
 # ----------Main----------
-
-
 def main():
-    serailPort = serialSetup()
-    drawInit()
+    serial_port = serial_setup()
+    #vairables to controll the game
+    ADC = adc.adc(10, 9)
+    i2c = I2C.I2C()
+    b = ball.ball()
+    left_score = 0
+    right_score = 0
+    left_bat = bat.bat("left")
+    right_bat = bat.bat("right")
+    speed = 0.04 #1/speed == frequency
+
+    draw.draw_init(serial_port, ball, left_bat, right_bat, left_score, right_score)
+
+
     go = True
-    gameStart = False
+
     redrawCenter = False
     redrawScore = False
+
     while go:
         if redrawCenter:
-            updateBall()
-            drawCenter()
+            b.update_ball(left_bat, right_bat, left_score, right_score)
+            draw.draw_center(serial_port)
             redrawCenter = False
             time.sleep(speed)
             continue
         elif redrawScore:
-            updateBall()
-            drawScores()
+            b.update_ball(left_bat, right_bat, left_score, right_score)
+            draw.draw_scores(serial_port, ball, left_score, right_score)
             redrawScore = False
             time.sleep(speed)
             continue
         else:
-            updateBall()
+            b.update_ball(left_bat, right_bat, left_score, right_score)
 
-        if ballOnCenter():
+        if b.ball_on_center():
             redrawCenter = True
-            drawBall()
-        elif ballOnScore():
+            draw.draw_ball(serial_port, b)
+        elif b.ball_on_score():
             redrawScore = True
-            drawBall()
+            draw.draw_ball(serial_port, b)
         else:
-            drawBall()
+            draw.draw_ball(serial_port, b)
         time.sleep(speed)
-        updateLED()
-        updateADC()
+        i2c.update_leds(b.ball_pos_3_bit())
+        update_adc(serial_port, ADC, left_bat)
 
 
 if __name__ == "__main__":

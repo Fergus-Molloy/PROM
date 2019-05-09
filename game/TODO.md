@@ -7,4 +7,4 @@
   - [x] ~~constants~~
   - [x] ~~draw~~
   - [x] ~~I2C~~
-  - [ ] pong
+  - [x] ~~pong~~

@@ -1,3 +1,4 @@
+import math
 import draw
 from constants import constant as c
 
@@ -41,6 +42,9 @@ class ball:
             return True
         else:
             return False
+
+    def ball_pos_3_bit(self):
+        return math.floor(float(self.x)/8)
 
     def ball_on_score(self): #for redrawing score
         left_x_offset = c.WINDOW_WIDTH / 4
