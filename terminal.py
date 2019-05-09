@@ -1,9 +1,10 @@
 import RPi.GPIO as GPIO				
 import time
 import sys
+from constants import constant as c
 
 class ldr():
-    def __init__( self, pinI, pinO  ):
+    def __init__( self, pinI, pinO):
         self.count = 0
         self.RESET_PIN = pinO
         self.TEST_PIN = pinI
@@ -30,43 +31,49 @@ class ldr():
         return self.count
 
 class button():
-  def__init__(self, pin1,pin2):
-    self.BUTTON_1 = pin1
-    self.BUTTON_2 = pin2
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
+    def __init__(self, pin1,pin2):
+	self.BUTTON_1 = pin1
+	self.BUTTON_2 = pin2
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
 
-    GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
-` def update(self,pin):
-  b=[0,0]
-    while True:
-	    if (GPIO.input(11)==1):
-		    b[0]=0
-	    else:
-		    b[0]=1
-      if (GPIO.input(15)==1):
-		    b[1]=0
-	    else:
-		    b[1]=1
-  return b
-  
+    def update(self):
+	b=[0,0]
+	while True:
+		if (GPIO.input(11)==1):
+			b[0]=0
+		else:
+			b[0]=1
+		if (GPIO.input(15)==1):
+			b[1]=0
+		else:
+			b[1]=1
+		return b
+
+ 
 def main():
     print("main program")
     ldr1 = ldr( 10, 9 )
-    buttons1 = (11, 15)
+    buttons = button(11, 15)
     while True: 
+
         countA = ldr1.update()
-        outputString = "Resistor value = " + str(countA) 
-        print outputString
-        buttonval = buttons1.update()
-        outputString2 = "Button 1 Value = " + buttonval[0]
-        outputString3= "Button 2 Value = " + buttonval[1]
+	buttonval = buttons.update()
+
+        outputString = "Resistor value = " + str(countA)         
+        outputString2 = "Button 1 Value = " + str(buttonval[0])
+        outputString3 = "Button 2 Value = " + str(buttonval[1])
+	outputString4 = "Bat Size = " + str(c.BAT_SIZE)
+	
+	print outputString
         print outputString2
         print outputString3
+	print outputString4
         time.sleep(0.5) 
-        sys.stdout.write("\033[2A")
+        sys.stdout.write("\033[4A")
     
 
 if __name__ == '__main__':
