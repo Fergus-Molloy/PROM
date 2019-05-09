@@ -18,9 +18,14 @@ def clear_line():
     write += c.esc+"[%sD" % (c.WINDOW_WIDTH,)
     return write
 
+def clear_ball(ball):
+    write = c.esc+"[%s;%sH" % (ball.y, ball.x)
+    write += c.colorBlack
+    return write
+
 
 # -----Draw Bats-----
-def drawLeftBat(left_bat):
+def draw_left_bat(left_bat):
     write = c.esc+"[0;0H"
     for y in range(left_bat.y, left_bat.y+c.BAT_SIZE):
         bat = "[%d;%dH" % (y, left_bat.x)
@@ -28,7 +33,7 @@ def drawLeftBat(left_bat):
         write += c.colorBlue
     return write
 
-def drawRightBat(right_bat):
+def draw_right_bat(right_bat):
     write = c.esc+"[0;0H"
     for y in range(right_bat.y, right_bat.y+c.BAT_SIZE):
         bat = "[%d;%dH" % (y, right_bat.x)
@@ -36,14 +41,14 @@ def drawRightBat(right_bat):
         write +=c.colorBlue
     return write
 
-def drawBats(left_bat, right_bat):
-    write = drawLeftBat(left_bat)
-    write += drawRightBat(right_bat)
+def draw_bats(left_bat, right_bat):
+    write = draw_left_bat(left_bat)
+    write += draw_right_bat(right_bat)
     return write
 
 
 # -----Draw Center-----
-def drawCenter():
+def draw_center():
     b = 1  # for 2 bit counter starting at 1 makes it pretty
     middle = "[0;%dH" % (c.WINDOW_WIDTH/2,)
     write = c.esc+middle
@@ -63,7 +68,7 @@ def drawCenter():
 
 
 # -----Draw Scores-----
-def scoreSequence(score):
+def score_sequence(score):
     scores = [
         c.zero,
         c.one,
@@ -78,27 +83,27 @@ def scoreSequence(score):
     ]
     return scores[score]
 
-def drawLeftScore(left_score):
+def draw_left_score(left_score):
     xOffset = c.WINDOW_WIDTH / 4
     y_offset = c.WINDOW_HEIGHT / 10
-    string = scoreSequence(left_score)
+    string = score_sequence(left_score)
     write = chr(27)+"[%d;%dH" % (y_offset, xOffset)
     for x in string:
         write += x
     return write
 
-def drawRightScore(right_score):
+def draw_right_score(right_score):
     xOffset = c.WINDOW_WIDTH - (c.WINDOW_WIDTH/4)
     y_offset = c.WINDOW_HEIGHT / 10
-    string = scoreSequence(right_score)
+    string = score_sequence(right_score)
     write = chr(27)+"[%d;%dH" % (y_offset, xOffset)
     for x in string:
         write += x
     return write
 
-def drawScores(ball, left_score, right_score):
-    drawLeftScore(left_score)
-    drawRightScore(right_score)
+def draw_scores(ball, left_score, right_score):
+    draw_left_score(left_score)
+    draw_right_score(right_score)
     write = c.esc+"[40m "
     write += c.esc+"[0;0H"
     write += c.esc + "[%s;%sH" % (ball.y, ball.x)
@@ -106,30 +111,25 @@ def drawScores(ball, left_score, right_score):
 
 
 # ------Draw Ball-----
-def drawBall(ball):
+def draw_ball(ball):
     write = c.esc+"[1D"+c.colorBlack
     write += c.esc + "[%s;%sH" % (ball.y, ball.x)
     write += c.colorWhite
     return write
 
-def clearBall(ball):
-    write = c.esc+"[%s;%sH" % (ball.y, ball.x)
-    write += c.colorBlack
-    return write
-
 
 # -----Draw Initial-----
-def drawInit(ball, left_bat, right_bat, left_score, right_score):
+def draw_init(ball, left_bat, right_bat, left_score, right_score):
     write = clear()
-    write += drawBats(left_bat, right_bat)
-    write += drawCenter()
-    write += drawScores(ball, left_score, right_score)
-    write +=drawBall(ball)
+    write += draw_bats(left_bat, right_bat)
+    write += draw_center()
+    write += draw_scores(ball, left_score, right_score)
+    write +=draw_ball(ball)
     return write
 
 
 # -----Debug-----
-def drawArea():
+def draw_area():
     left_x_offset = c.WINDOW_WIDTH / 4
     right_x_offset = c.WINDOW_WIDTH - left_x_offset
     y_offset = (c.WINDOW_HEIGHT / 10)

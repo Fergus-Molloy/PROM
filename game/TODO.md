@@ -1,10 +1,10 @@
 # Todo
 
 - Refactor
-  - [ ] ball
-  - [ ] adc
-  - [ ] bat
-  - [ ] constants
+  - [x] ~~ball~~
+  - [x] ~~adc~~
+  - [x] ~~bat~~
+  - [x] ~~constants~~
   - [x] ~~draw~~
-  - [ ] I2C
+  - [x] ~~I2C~~
   - [ ] pong

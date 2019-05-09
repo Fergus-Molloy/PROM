@@ -4,7 +4,7 @@ from constants import constant as c
 
 class ball:
     def __init__(self):
-        self.x = 2
+        self.x = 2 #infront of bat
         self.y = c.WINDOW_HEIGHT/2
         self.y_dir = 1
         self.x_dir = 1
@@ -36,27 +36,27 @@ class ball:
         else:
             return 0  # no score
 
-    def ballOnCenter(self):
+    def ball_on_center(self): #for redrawing center line
         if self.x == c.WINDOW_WIDTH/2:
             return True
         else:
             return False
 
-    def ballOnScore(self):
-        leftXOffset = c.WINDOW_WIDTH / 4
-        rightXOffset = c.WINDOW_WIDTH - leftXOffset
-        yOffset = c.WINDOW_HEIGHT / 10
-        if self.x > leftXOffset-1 and self.x < leftXOffset+3 and \
-                self.y > yOffset-1 and self.y < yOffset+5:
+    def ball_on_score(self): #for redrawing score
+        left_x_offset = c.WINDOW_WIDTH / 4
+        right_x_offset = c.WINDOW_WIDTH - left_x_offset
+        y_offset = c.WINDOW_HEIGHT / 10
+        if self.x > left_x_offset-1 and self.x < left_x_offset+3 and \
+                self.y > y_offset-1 and self.y < y_offset+5:
             return True
-        elif self.x > rightXOffset-1 and self.x < rightXOffset+3 and \
-                self.y > yOffset-1 and self.y < yOffset+5:
+        elif self.x > right_x_offset-1 and self.x < right_x_offset+3 and \
+                self.y > y_offset-1 and self.y < y_offset+5:
             return True
         else:
             return False
 
     def update_ball(self, bat_left, bat_right, left_score, right_score):
-        draw.clear_ball()
+        draw.clear_ball(self)
         self.y += self.y_dir
         self.x += self.x_dir
         if self.check_hit(bat_left.y, bat_right.y):
@@ -65,10 +65,10 @@ class ball:
             self.y_dir *= -1
         score = self.check_score()
         if score == 1:
-            draw.drawLeftScore(left_score)
+            draw.draw_left_score(left_score)
             left_score += 1
             return left_score
         elif score == -1:
-            draw.drawRightScore(right_score)
+            draw.draw_right_score(right_score)
             right_score += 1
             return right_score
