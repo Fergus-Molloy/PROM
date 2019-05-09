@@ -40,17 +40,17 @@ class button():
     GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
 ` def update(self,pin):
-  b=[0,0]
-    while True:
-	    if (GPIO.input(11)==1):
-		    b[0]=0
-	    else:
-		    b[0]=1
-      if (GPIO.input(15)==1):
-		    b[1]=0
-	    else:
-		    b[1]=1
-  return b
+	b=[0,0]
+	while True:
+		if (GPIO.input(11)==1):
+			b[0]=0
+		else:
+			b[0]=1
+		if (GPIO.input(15)==1):
+			b[1]=0
+		else:
+			b[1]=1
+		return b
   
 def main():
     print("main program")
