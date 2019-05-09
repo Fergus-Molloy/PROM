@@ -22,7 +22,7 @@ CMD_CODE = 0100
 bus = smbus.SMBus(1) 
 bus.write_byte( I2CADDR, CMD_CODE ) 
 tmp = bus.read_word_data( I2CADDR, 0x00 ) 
-temp2 = temp[8:-1] + temp[0:8]
+
 # The value in the variable tmp needs further processing.
 # Problem 1: the ADC returns the converted value back to 
 # the Pi in the wrong byte order. The Pi is expecting 
