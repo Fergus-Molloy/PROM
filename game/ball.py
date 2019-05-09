@@ -1,4 +1,6 @@
+import draw
 from constants import constant as c
+
 
 class ball:
     def __init__(self):
@@ -34,39 +36,39 @@ class ball:
         else:
             return 0  # no score
 
-    def ballOnCenter():
-    	if self.x == c.WINDOW_WIDTH/2:
-    		return True
-    	else:
-			return False
+    def ballOnCenter(self):
+        if self.x == c.WINDOW_WIDTH/2:
+            return True
+        else:
+            return False
 
-    def ballOnScore():
-    leftXOffset = c.WINDOW_WIDTH / 4
-    rightXOffset = c.WINDOW_WIDTH - leftXOffset
-    yOffset = c.WINDOW_HEIGHT / 10
-    if self.x > leftXOffset-1 and self.x < leftXOffset+3 and \
-            self.y > yOffset-1 and self.y < yOffset+5:
-        return True
-    elif self.x > rightXOffset-1 and self.x < rightXOffset+3 and \
-            self.y > yOffset-1 and self.y < yOffset+5:
-        return True
-    else:
-        return False
+    def ballOnScore(self):
+        leftXOffset = c.WINDOW_WIDTH / 4
+        rightXOffset = c.WINDOW_WIDTH - leftXOffset
+        yOffset = c.WINDOW_HEIGHT / 10
+        if self.x > leftXOffset-1 and self.x < leftXOffset+3 and \
+                self.y > yOffset-1 and self.y < yOffset+5:
+            return True
+        elif self.x > rightXOffset-1 and self.x < rightXOffset+3 and \
+                self.y > yOffset-1 and self.y < yOffset+5:
+            return True
+        else:
+            return False
 
     def update_ball(self, bat_left, bat_right, left_score, right_score):
         draw.clear_ball()
         self.y += self.y_dir
         self.x += self.x_dir
-        if self.check_hit(selfat_left.y, selfat_right.y):
+        if self.check_hit(bat_left.y, bat_right.y):
             self.x_dir *= -1
         if self.check_hit_side():
             self.y_dir *= -1
         score = self.check_score()
         if score == 1:
-            leftScore = leftScore + 1
-            drawLeftScore(leftScore)
-            # self.serve()
+            draw.drawLeftScore(left_score)
+            left_score += 1
+            return left_score
         elif score == -1:
-            rightScore += 1
-            drawRightScore(rightScore)
-            # self.serve()
+            draw.drawRightScore(right_score)
+            right_score += 1
+            return right_score
