@@ -64,19 +64,19 @@ def main():
 
     while go:
         if redrawCenter:
-            b.update_ball(left_bat, right_bat, left_score, right_score)
+            b.update_ball(serial_port, left_bat, right_bat, left_score, right_score)
             draw.draw_center(serial_port)
             redrawCenter = False
             time.sleep(speed)
             continue
         elif redrawScore:
-            b.update_ball(left_bat, right_bat, left_score, right_score)
+            b.update_ball(serial_port, left_bat, right_bat, left_score, right_score)
             draw.draw_scores(serial_port, ball, left_score, right_score)
             redrawScore = False
             time.sleep(speed)
             continue
         else:
-            b.update_ball(left_bat, right_bat, left_score, right_score)
+            b.update_ball(serial_port, left_bat, right_bat, left_score, right_score)
 
         if b.ball_on_center():
             redrawCenter = True

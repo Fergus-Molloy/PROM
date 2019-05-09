@@ -59,8 +59,8 @@ class ball:
         else:
             return False
 
-    def update_ball(self, bat_left, bat_right, left_score, right_score):
-        draw.clear_ball(self)
+    def update_ball(self, serial_port, bat_left, bat_right, left_score, right_score):
+        draw.clear_ball(serial_port, self)
         self.y += self.y_dir
         self.x += self.x_dir
         if self.check_hit(bat_left.y, bat_right.y):
@@ -69,10 +69,10 @@ class ball:
             self.y_dir *= -1
         score = self.check_score()
         if score == 1:
-            draw.draw_left_score(left_score)
+            draw.draw_left_score(serial_port, left_score)
             left_score += 1
             return left_score
         elif score == -1:
-            draw.draw_right_score(right_score)
+            draw.draw_right_score(serial_port, right_score)
             right_score += 1
             return right_score
