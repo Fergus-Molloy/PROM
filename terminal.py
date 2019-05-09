@@ -3,7 +3,7 @@ import time
 import sys
 
 class ldr():
-    def __init__( self, pinI, pinO  ):
+    def __init__( self, pinI, pinO):
         self.count = 0
         self.RESET_PIN = pinO
         self.TEST_PIN = pinI
@@ -30,16 +30,16 @@ class ldr():
         return self.count
 
 class button():
-  def__init__(self, pin1,pin2):
-    self.BUTTON_1 = pin1
-    self.BUTTON_2 = pin2
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
+    def __init__(self, pin1,pin2):
+	self.BUTTON_1 = pin1
+	self.BUTTON_2 = pin2
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
 
-    GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
-` def update(self,pin):
+    def update(self):
 	b=[0,0]
 	while True:
 		if (GPIO.input(11)==1):
@@ -55,18 +55,22 @@ class button():
 def main():
     print("main program")
     ldr1 = ldr( 10, 9 )
-    buttons1 = (11, 15)
+    buttons = button(11, 15)
     while True: 
+
         countA = ldr1.update()
-        outputString = "Resistor value = " + str(countA) 
-        print outputString
-        buttonval = buttons1.update()
-        outputString2 = "Button 1 Value = " + buttonval[0]
-        outputString3= "Button 2 Value = " + buttonval[1]
+	buttonval = buttons.update()
+
+        outputString = "Resistor value = " + str(countA)         
+        outputString2 = "Button 1 Value = " + str(buttonval[0])
+        outputString3= "Button 2 Value = " + str(buttonval[1])
+
+	print outputString
         print outputString2
         print outputString3
+
         time.sleep(0.5) 
-        sys.stdout.write("\033[2A")
+        sys.stdout.write("\033[3A")
     
 
 if __name__ == '__main__':
