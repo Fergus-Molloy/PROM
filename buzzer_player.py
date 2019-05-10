@@ -40,7 +40,7 @@
 import RPi.GPIO as GPIO
 import time
 
-buzzer_pin = 14
+buzzer_pin = 17
 
 notes = {
 	'B0' : 31,
@@ -613,9 +613,9 @@ def play(melody,tempo,pause,pace=0.800):
 if __name__ == '__main__':		# Program start from here
 	try:
 		setup()
-		print "The Final Countdown"
-		play(final_countdown_melody, final_countdown_tempo, 0.30, 1.2000)
-		time.sleep(2)
+#		print "The Final Countdown"
+#		play(final_countdown_melody, final_countdown_tempo, 0.30, 1.2000)
+#		time.sleep(2)
 #		print "Per Olssons Bonnagard (Old MacDonald Had A Farm) Melody"
 #		play(bonnagard_melody, bonnagard_tempo, 0.30, 0.800)
 #		time.sleep(2)
@@ -638,8 +638,8 @@ if __name__ == '__main__':		# Program start from here
 #		play(star_wars_melody, star_wars_tempo, 0.50, 1.000)
 #		time.sleep(2)
 #		print "Super Mario Theme"
-#		play(melody, tempo, 1.3, 0.800)
-#		time.sleep(2)
+		play(melody, tempo, 1.3, 0.800)
+		time.sleep(2)
 #		print "Super Mario Underworld Theme"
 #		play(underworld_melody, underworld_tempo, 1.3, 0.800)
 #		time.sleep(2)
