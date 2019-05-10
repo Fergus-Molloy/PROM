@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO				
 import time
 import sys
+from constants import constant as c
 
 class ldr():
     def __init__( self, pinI, pinO):
@@ -51,7 +52,10 @@ class button():
 		else:
 			b[1]=1
 		return b
-  
+
+def getBatSize(batSize):
+	return batSize
+
 def main():
     print("main program")
     ldr1 = ldr( 10, 9 )
@@ -60,14 +64,23 @@ def main():
 
         countA = ldr1.update()
 	buttonval = buttons.update()
-
+	bat_status = ""
+	if getBatSize(c.BAT_SIZE) == 3:
+		bat_status = "Normal Size"
+	elif getBatSize(c.BAT_SIZE) == 5:
+		at_status = "Super Size"
+	
         outputString = "Resistor value = " + str(countA)         
         outputString2 = "Button 1 Value = " + str(buttonval[0])
         outputString3= "Button 2 Value = " + str(buttonval[1])
-
+	outputString4 = "Bat Size = " + c.BAT_SIZE
+	outputString5 = "Bat Status = " + bat_status
+	
 	print outputString
         print outputString2
         print outputString3
+	print outputString4
+	print outputString5
 
         time.sleep(0.5) 
         sys.stdout.write("\033[3A")
