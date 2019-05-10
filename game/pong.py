@@ -7,6 +7,7 @@ import ball
 import bat
 import adc
 import buttons
+import buzzer
 from serial import Serial
 from constants import constant as c
 
@@ -68,6 +69,7 @@ def main():
     right_bat = bat.bat("right")
     switches = buttons.button(11, 15)
     draw.draw_init(serial_port, b, left_bat, right_bat, left_score, right_score)
+    
 
     redrawCenter = False
     redrawScore = False
@@ -113,7 +115,8 @@ def main():
             continue
         else:
             b.update_ball(serial_port, left_bat, right_bat)
-	    if b.left_score == 10 or b.right_score == 10:
+	    if b.left_score == 10 or b.right_score ==10:
+		buzzer.play_buzzer() ########
 		game_end()
 	    if b.score_counter == 5:
 		b.score_counter = 0
