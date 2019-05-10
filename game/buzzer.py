@@ -571,7 +571,7 @@ def play(melody,tempo,pause,pace=0.800):
 	
 	
 
-if __name__ == '__main__':		# Program start from here
+def play_buzzer():		# Program start from here
 	try:
 		setup()
 #		print "The Final Countdown"
