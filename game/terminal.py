@@ -33,11 +33,11 @@ class ldr():
 class button():
     def __init__(self, pin1,pin2):
         self.BUTTON_1 = pin1
-	      self.BUTTON_2 = pin2
-	      GPIO.setwarnings(False)
-	      GPIO.setmode(GPIO.BCM)
+	self.BUTTON_2 = pin2
+	GPIO.setwarnings(False)
+	GPIO.setmode(GPIO.BCM)
 
-	      GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
+	GPIO.setup(self.BUTTON_1, GPIO.IN,pull_up_down=GPIO.PUD_UP)
        	GPIO.setup(self.BUTTON_2, GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
     def update(self):
@@ -63,7 +63,7 @@ def main():
     while True: 
 
         countA = ldr1.update()
-	      buttonval = buttons.update()
+	buttonval = buttons.update()
       	bat_status = ""
       	if getBatSize(c.BAT_SIZE) == 3:
       		bat_status = "Normal Size"
@@ -73,8 +73,8 @@ def main():
         outputString = "Resistor value = " + str(countA)         
         outputString2 = "Button 1 Value = " + str(buttonval[0])
         outputString3= "Button 2 Value = " + str(buttonval[1])
-	      outputString4 = "Bat Size = " + c.BAT_SIZE
-	      outputString5 = "Bat Status = " + bat_status
+	outputString4 = "Bat Size = " + c.BAT_SIZE
+	outputString5 = "Bat Status = " + bat_status
 	
       	print outputString
         print outputString2
