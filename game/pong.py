@@ -6,7 +6,7 @@ import I2C
 import ball
 import bat
 import adc
-import buttons
+#import buttons  <- is this needed? it comes up with a 'its not there error'
 import buzzer
 from serial import Serial
 from constants import constant as c
