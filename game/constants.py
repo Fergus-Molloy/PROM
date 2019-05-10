@@ -10,7 +10,7 @@ class constant:
 
     esc = chr(27)
 
-    SERVE =  False
+    SERVE = True
     SERVE_SIDE = "left"
     # colors
     colorBlack   = esc+"[40m "
