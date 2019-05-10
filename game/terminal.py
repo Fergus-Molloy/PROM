@@ -45,7 +45,7 @@ class button():
       	while True:
       		if (GPIO.input(11)==1):
 	  		    b[0]=0
-		      else:
+		else:
 		      	b[0]=1
 	    	if (GPIO.input(15)==1):
 	      		b[1]=0
@@ -73,8 +73,8 @@ def main():
         outputString = "Resistor value = " + str(countA)         
         outputString2 = "Button 1 Value = " + str(buttonval[0])
         outputString3= "Button 2 Value = " + str(buttonval[1])
-	outputString4 = "Bat Size = " + c.BAT_SIZE
-	outputString5 = "Bat Status = " + bat_status
+	outputString4 = "Bat Size = " + str(c.BAT_SIZE)
+	outputString5 = "Bat Status = " + str(bat_status)
 	
       	print outputString
         print outputString2
