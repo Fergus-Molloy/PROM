@@ -83,7 +83,7 @@ def main():
 	print outputString5
 
         time.sleep(0.5) 
-        sys.stdout.write("\033[3A")
+        sys.stdout.write("\033[5A")
     
 
 if __name__ == '__main__':
