@@ -35,11 +35,21 @@ def init_gpio():
 
 
 # -----ADC-----
-def update_adc(serial_port, adc, left_bat):
-    value = adc.update()
-    left_bat.setY(value)
+def update_adc(serial_port, adc, left_bat, right_bat):
+    value = adc.update() - 9 #adc never outputs less than 9???
+    left_bat.setY(c.WINDOW_HEIGHT - value)
     draw.draw_left_bat(serial_port, left_bat)
+    draw.draw_right_bat(serial_port, right_bat)
+    return left_bat.y + 1
 
+def game_end():
+    exit()
+
+def switch_serve(side):
+    if side == "left":
+	return "right"
+    else:
+	return "left"
 
 # ----------Main----------
 def main():
@@ -52,32 +62,32 @@ def main():
     right_score = 0
     left_bat = bat.bat("left")
     right_bat = bat.bat("right")
-    speed = 0.04 #1/speed == frequency
+    speed = 0.00 #1/speed == frequency
 
-    draw.draw_init(serial_port, ball, left_bat, right_bat, left_score, right_score)
-
-
-    go = True
+    draw.draw_init(serial_port, b, left_bat, right_bat, left_score, right_score)
 
     redrawCenter = False
     redrawScore = False
-
-    while go:
+    while not c.SERVE:
         if redrawCenter:
-            b.update_ball(serial_port, left_bat, right_bat, left_score, right_score)
+            b.update_ball(serial_port, left_bat, right_bat)
             draw.draw_center(serial_port)
             redrawCenter = False
             time.sleep(speed)
             continue
         elif redrawScore:
-            b.update_ball(serial_port, left_bat, right_bat, left_score, right_score)
-            draw.draw_scores(serial_port, ball, left_score, right_score)
+            b.update_ball(serial_port, left_bat, right_bat)
+            draw.draw_scores(serial_port, b, b.left_score, b.right_score)
             redrawScore = False
             time.sleep(speed)
             continue
         else:
-            b.update_ball(serial_port, left_bat, right_bat, left_score, right_score)
-
+            b.update_ball(serial_port, left_bat, right_bat)
+	    if b.left_score == 10 or b.right_score == 10:
+		game_end()
+	    if b.score_counter == 5:
+		b.score_counter = 0
+		c.SERVE_SIDE = switch_serve(c.SERVE_SIDE)
         if b.ball_on_center():
             redrawCenter = True
             draw.draw_ball(serial_port, b)
@@ -88,8 +98,17 @@ def main():
             draw.draw_ball(serial_port, b)
         time.sleep(speed)
         i2c.update_leds(b.ball_pos_3_bit())
-        update_adc(serial_port, ADC, left_bat)
-
+        update_adc(serial_port, ADC, left_bat, right_bat)    
+    
+    while c.SERVE:
+	if c.SERVE_SIDE == "right":
+		b.y = right_bat.y
+        	b.x == right_bat.x+3
+	else:
+		b.y = update_adc(serial_port, ADC, left_bat, right_bat)
+		b.x == left_bat.x+1
+	draw.clear_col(serial_port, b.x)
+	draw.draw_ball(serial_port, b)
 
 if __name__ == "__main__":
     main()

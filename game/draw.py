@@ -27,12 +27,15 @@ def clear_ball(serial_port, ball):
     write(serial_port, c.esc+"[%s;%sH" % (ball.y, ball.x))
     write(serial_port, c.colorBlack)
 
+def clear_col(serial_port, x):
+    for y in range(c.WINDOW_HEIGHT):
+	write(serial_port, c.esc+"[%s;%sH" % (y, x) + c.colorBlack)
 
 # -----Draw Bats-----
 def draw_left_bat(serial_port, left_bat):
-    write(serial_port, c.esc+"[0;0H")
+    clear_col(serial_port, left_bat.x)
     for y in range(left_bat.y, left_bat.y+c.BAT_SIZE):
-        bat = "[%d;%dH" % (y, left_bat.x)
+        bat = "[%s;%sH" % (y, left_bat.x)
         write(serial_port, c.esc+bat)
         write(serial_port, c.colorBlue)
 
@@ -73,19 +76,22 @@ def draw_center(serial_port):
 
 # -----Draw Scores-----
 def score_sequence(score):
-    scores=[
-        c.zero,
-        c.one,
-        c.two,
-        c.three,
-        c.four,
-        c.five,
-        c.six,
-        c.seven,
-        c.eight,
-        c.nine
-    ]
-    return scores[score]
+	try:
+   	 scores=[
+       		 c.zero,
+    		 c.one,
+		 c.two,
+		 c.three,
+		 c.four,
+	         c.five,
+        	 c.six,
+	         c.seven,
+	         c.eight,
+        	 c.nine
+    		]
+	 return scores[score]
+	except Exception:
+		exit()
 
 def draw_left_score(serial_port, left_score):
     xOffset = c.WINDOW_WIDTH / 4
@@ -133,16 +139,13 @@ def draw_init(serial_port, ball, left_bat, right_bat, left_score, right_score):
 
 
 # -----Debug-----
-def draw_area(serial_port):
-    left_x_offset=c.WINDOW_WIDTH / 4
-    right_x_offset=c.WINDOW_WIDTH - left_x_offset
-    y_offset=(c.WINDOW_HEIGHT / 10)
+def draw_area(serial_port, left_bat, right_bat, ball):
     for x in range(c.WINDOW_WIDTH):
         for y in range(c.WINDOW_HEIGHT):
             write(serial_port, c.esc+"[%s;%sH" % (y, x))
-            if x > left_x_offset-1 and x < left_x_offset+3:
-                if y > y_offset-1 and y < y_offset+5:
+            if x+ball.x_dir == left_bat.x:
+                if y >= left_bat.y and y < left_bat.y+3:
                     write(serial_port, c.colorCyan)
-            elif x > right_x_offset-1 and x < right_x_offset+3:
-                if y > y_offset-1 and y < y_offset+5:
+            elif x+ball.x_dir == right_bat.x:
+                if y >= right_bat.y and y < right_bat.y+3:
                     write(serial_port, c.colorCyan)

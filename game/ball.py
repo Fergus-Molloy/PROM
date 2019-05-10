@@ -1,4 +1,3 @@
-import math
 import draw
 from constants import constant as c
 
@@ -10,12 +9,19 @@ class ball:
         self.y_dir = 1
         self.x_dir = 1
         self.serves = 0
+	self.left_score = 0
+	self.right_score = 0
+	self.score_counter = 0
 
-    def check_hit(self, bat_left, bat_right):
-        if self.x_dir == -1 and self.x == 1 and bat_left > self.y and (bat_left-c.BAT_SIZE) < self.y:
-            return True
-        if self.x_dir == 1 and self.x == (c.WINDOW_WIDTH-1) and bat_right > self.y and (bat_right-c.BAT_SIZE) < self.y:
-            return True
+    def check_hit(self, left_bat, right_bat):
+        if self.x_dir == -1 and self.x+self.x_dir == (left_bat.x):
+	    if left_bat.y <= self.y \
+	and (left_bat.y+c.BAT_SIZE) > self.y:
+		return True
+        if self.x_dir == 1 and self.x+self.x_dir == (right_bat.x):
+	    if right_bat.y <= self.y \
+	and (right_bat.y/2+c.BAT_SIZE) > self.y:
+		return True
         else:
             return False
 
@@ -44,7 +50,8 @@ class ball:
             return False
 
     def ball_pos_3_bit(self):
-        return math.floor(float(self.x)/8)
+        ratio = int(round(9*(float(self.x)/100))) #7* because 0 to 7 index
+	return ratio
 
     def ball_on_score(self): #for redrawing score
         left_x_offset = c.WINDOW_WIDTH / 4
@@ -59,20 +66,24 @@ class ball:
         else:
             return False
 
-    def update_ball(self, serial_port, bat_left, bat_right, left_score, right_score):
+    def update_ball(self, serial_port, left_bat, right_bat):
         draw.clear_ball(serial_port, self)
         self.y += self.y_dir
         self.x += self.x_dir
-        if self.check_hit(bat_left.y, bat_right.y):
+        if self.check_hit(left_bat, right_bat):
             self.x_dir *= -1
         if self.check_hit_side():
             self.y_dir *= -1
         score = self.check_score()
         if score == 1:
-            draw.draw_left_score(serial_port, left_score)
-            left_score += 1
-            return left_score
+            self.left_score += 1
+	    self.score_counter += 1
+            draw.draw_left_score(serial_port, self.left_score)
+	    #c.SERVE = True
+	    #c.SERVE_SIDE = "right"
         elif score == -1:
-            draw.draw_right_score(serial_port, right_score)
-            right_score += 1
-            return right_score
+            self.right_score += 1
+	    self.score_counter += 1
+            draw.draw_right_score(serial_port, self.right_score)
+	    #c.SERVE = True
+	    #c.SERVE_SIDE = "left"
