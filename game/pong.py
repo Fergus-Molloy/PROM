@@ -6,8 +6,8 @@ import I2C
 import ball
 import bat
 import adc
-#import buttons  <- is this needed? it comes up with a 'its not there error'
-import buzzer
+import buttons  
+#import buzzer  <- implimentation delay due to lab being too noisy to test the code (buzzer)
 from serial import Serial
 from constants import constant as c
 
@@ -116,7 +116,7 @@ def main():
         else:
             b.update_ball(serial_port, left_bat, right_bat)
 	    if b.left_score == 10 or b.right_score ==10:
-		buzzer.play_buzzer() ########
+#		buzzer.play_buzzer() <- implimentation delay due to lab being too noisy to test the code (buzzer)
 		game_end()
 	    if b.score_counter == 5:
 		b.score_counter = 0
