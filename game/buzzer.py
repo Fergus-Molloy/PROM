@@ -543,10 +543,10 @@ def buzz(frequency, length):	 #create the function "buzz" and feed it the pitch 
 	numCycles = int(length * frequency)	 #the number of waves to produce is the duration times the frequency
 	
 	for i in range(numCycles):		#start a loop from 0 to the variable "cycles" calculated above
-		GPIO.output(buzzer_pin, True)	 #set pin 27 to high
-		time.sleep(delayValue)		#wait with pin 27 high
-		GPIO.output(buzzer_pin, False)		#set pin 27 to low
-		time.sleep(delayValue)		#wait with pin 27 low
+		GPIO.output(buzzer_pin, True)	 
+		time.sleep(delayValue)		
+		GPIO.output(buzzer_pin, False)		
+		time.sleep(delayValue)		
 	
 
 
@@ -571,12 +571,13 @@ def play(melody,tempo,pause,pace=0.800):
 	
 	
 
-def play_buzzer():		# Program start from here
+#def play_buzzer():		<- implimentation delay due to lab being too noisy to test the code (buzzer)
+if __name__ == "__main__":
 	try:
 		setup()
 #		print "The Final Countdown"
-#		play(final_countdown_melody, final_countdown_tempo, 0.30, 1.2000)
-#		time.sleep(2)
+		play(final_countdown_melody, final_countdown_tempo, 0.30, 1.2000)
+		time.sleep(2)
 #		print "Per Olssons Bonnagard (Old MacDonald Had A Farm) Melody"
 #		play(bonnagard_melody, bonnagard_tempo, 0.30, 0.800)
 #		time.sleep(2)
@@ -599,8 +600,8 @@ def play_buzzer():		# Program start from here
 #		play(star_wars_melody, star_wars_tempo, 0.50, 1.000)
 #		time.sleep(2)
 #		print "Super Mario Theme"
-		play(melody, tempo, 1.3, 0.800)
-		time.sleep(2)
+#		play(melody, tempo, 1.3, 0.800)
+#		time.sleep(2)
 #		print "Super Mario Underworld Theme"
 #		play(underworld_melody, underworld_tempo, 1.3, 0.800)
 #		time.sleep(2)
