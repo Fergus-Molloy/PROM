@@ -1,3 +1,4 @@
+#Code that allows the speaker to play when the game is started
 import RPi.GPIO as GPIO
 import time
 
