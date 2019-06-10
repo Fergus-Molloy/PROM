@@ -1,3 +1,4 @@
+#Class for creating the bats at either side of the screen
 import draw
 from constants import constant as c
 
