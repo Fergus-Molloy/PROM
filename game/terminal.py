@@ -1,7 +1,8 @@
-import RPi.GPIO as GPIO				
+#Contains code for displaying the debug screen
+import RPi.GPIO as GPIO			
 import time
 import sys
-from constants import constant as c
+from constants import constant as c 
 
 class ldr():
     def __init__( self, pinI, pinO):
