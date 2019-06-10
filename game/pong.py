@@ -1,3 +1,4 @@
+#The main program that controlls all aspects of the game
 import RPi.GPIO as GPIO
 import time, datetime
 import sys
