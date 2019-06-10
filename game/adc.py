@@ -1,3 +1,4 @@
+#Gets the input value from the ADC to change the bat position
 import RPi.GPIO as GPIO
 import time
 import sys
