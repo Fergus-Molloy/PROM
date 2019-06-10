@@ -1,3 +1,4 @@
+#Class containing the data for the bat and the scores
 import draw
 from constants import constant as c
 
