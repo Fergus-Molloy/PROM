@@ -1,9 +1,8 @@
+#Contains the methods needed for drawing to the screen
 from constants import constant as c
-
 
 def write(serial_port, string):
     serial_port.write(str(string))
-
 
 # -----Clear-----
 def clear(serial_port):
