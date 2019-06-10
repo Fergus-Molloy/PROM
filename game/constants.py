@@ -1,3 +1,4 @@
+#Contains all the constants that we could change during the demonstration
 class constant:
     WINDOW_HEIGHT = 24
     WINDOW_WIDTH  = 80
