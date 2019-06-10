@@ -1,3 +1,7 @@
+
+#Controls the I2C device connected to the PI
+#The I2C controls external LEDS which show the position
+# of the ball on the screen
 import smbus
 import time
 
